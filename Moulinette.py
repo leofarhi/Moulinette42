@@ -1,90 +1,29 @@
-import os
-import subprocess
-import shutil
-from shutil import rmtree
-import random
+from BaseLib import *
+import sys
 
-class Config:
-    def __init__(self):
-        self.PATH_git = ""
-        self.normeflag = ""
-Config = Config()
-def MakeDir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+Config.PATH_main = os.path.dirname(os.path.realpath(__file__))
 
-def DelDir(path):
-    if os.path.exists(path):
-        rmtree(path)
 
-def ResetTempDir():
-    path = Join(os.path.dirname(os.path.realpath(__file__)),"temp")
-    DelDir(path)
-    MakeDir(path)
-    return path
+if len(sys.argv) < 2:
+    print("Error argument")
+    quit()
 
-def Join(path1,*paths):
-    return os.path.join(path1,*paths)
+name = sys.argv[1]
+if name == "C_00":
+    from C_00.C_00 import *
 
-def CheckNorme(path):
-    result = Process(["norminette",Config.normeflag,path]).rstrip()
-    print(result)
-    return result==path+": OK!"
+elif name == "C_01":
+    from C_01.C_01 import *
 
-def Exec(string):
-    os.system(string)
+elif name == "C_02":
+    from C_02.C_02 import *
 
-def Process(cmd_list,**args):
-    result = subprocess.run(cmd_list, stdout=subprocess.PIPE,**args)
-    result = result.stdout.decode('utf-8')
-    return result
+elif name == "C_03":
+    from C_03.C_03 import *
 
-def CopyToTemp(path):
-    new_path = Join(tempDir,os.path.basename(path))
-    shutil.copyfile(path,Join(tempDir,new_path))
-    return new_path
+elif name == "C_04":
+    from C_04.C_04 import *
 
-def Pause():
-    input()
 
-def AutoMain(path,textH,textMain):
-    h_file = Join(tempDir,os.path.splitext(os.path.basename(path))[0]+".h")
-    with open(h_file,"w") as fic:
-        fic.write(textH)
-
-    main_file = Join(tempDir,"main.c")
-    with open(main_file,"w") as fic:
-        fic.write(textMain)
-    return h_file,main_file
-
-def CompileTemp():
-    os.chdir(tempDir)
-    cmd = "cc -Wall -Wextra -Werror *.c -o Output"
-    Process(cmd,shell=True,cwd=tempDir)
-
-def ExecuteCode(args="",canPrint=True):
-    os.chdir(tempDir)
-    cmd = "chmod +x Output"
-    Process(cmd,shell=True,cwd=tempDir)
-    if args!="":
-        args = " "+args
-    cmd = "./Output"+args
-    result = Process(cmd,cwd=tempDir)
-    if canPrint:
-        print(result, end="")
-        PrintColor("%",'\033[4m')
-    return result
-
-color_red='\033[93m'
-color_green='\033[92m'
-
-def PrintColor(text,color):
-    print(color+text+'\033[0m')
-
-def IfValid(valid,title=""):
-    if valid :
-        PrintColor("OK ! "+title,color_green)
-    else:
-        PrintColor("Error ! "+title,color_red)
-
-tempDir = ResetTempDir()
+else:
+    print("Error argument")

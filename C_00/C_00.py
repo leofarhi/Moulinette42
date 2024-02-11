@@ -1,5 +1,5 @@
-from Moulinette import *
-Config.PATH_git = "/mnt/nfs/homes/lfarhi/Desktop/piscine/day3_C_00/"
+from BaseLib import *
+Config.PATH_git = GetGitPath("C_00")
 Config.normeflag = "-R CheckForbiddenSourceHeader"
 
 
@@ -246,7 +246,7 @@ path_c = Join(Config.PATH_git,"ex07/ft_putnbr.c")
 valid = CheckNorme(path_c)
 IfValid(valid)
 temp_c = CopyToTemp(path_c)
-vals = [random.randint(-10000,0) for i in range (15)]+[random.randint(0,10000) for i in range (15)]
+vals = [0]+[-2147483648]+[random.randint(-10000,0) for i in range (15)]+[random.randint(0,10000) for i in range (15)]
 AutoMain(temp_c,"void ft_putnbr(int nb);",
 """
 #include <unistd.h>
