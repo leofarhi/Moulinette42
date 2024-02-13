@@ -334,7 +334,7 @@ int main(void)
     if (valid)printf("32 OK\\n");
     val[0] = 126;
     valid = valid && ft_str_is_printable(val);
-    if (valid)printf("127 OK\\n");
+    if (valid)printf("126 OK\\n");
     val[0] = 127;
     valid = valid && !ft_str_is_printable(val);
     if (valid)printf("127 OK\\n");

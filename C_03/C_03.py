@@ -71,7 +71,7 @@ AutoMain(temp_c,"int ft_strncmp(char *s1, char *s2, unsigned int n);",
 #include "ft_strncmp.h"
 int main(void)
 {
-
+	char s0_0[5] = "";
     char s1_0[] = "a";
 	char s2_0[] = "aaa";
 	char s3_0[] = "ddd";
@@ -80,6 +80,12 @@ int main(void)
 	char s6_0[] = "bd";
 	char s7_0[] = "b";
 	char s8_0[] = "bqq";
+
+	printf("%d, %d\\n", ft_strncmp(s0_0,s1_0,1), strncmp(s0_0,s1_0,1));
+	printf("#0# %s\\n", ft_strncmp(s0_0,s1_0,1)== strncmp(s0_0,s1_0,1) ? "Success" : "Fail");
+
+    printf("%d, %d\\n", ft_strncmp(s1_0,s1_0,0), strncmp(s1_0,s1_0,0));
+	printf("#0# %s\\n", ft_strncmp(s1_0,s1_0,0)== strncmp(s1_0,s1_0,0) ? "Success" : "Fail");
 
     printf("%d, %d\\n", ft_strncmp(s1_0,s1_0,1), strncmp(s1_0,s1_0,1));
 	printf("#1# %s\\n", ft_strncmp(s1_0,s1_0,1)== strncmp(s1_0,s1_0,1) ? "Success" : "Fail");
@@ -147,7 +153,7 @@ int main(void)
 CompileTemp()
 print("#"*15,"Exec","#"*15)
 res = ExecuteCode()
-v2 = res.count("Success") == 17
+v2 = res.count("Success") == 19
 valid = valid and v2
 IfValid(v2)
 IfValid(valid,"Exo 1")
@@ -297,6 +303,9 @@ int main(void)
     printf("%s:%s\\n", ft_strstr(s7a, s8a), strstr(s7b, s8b));
     printf("%s\\n", ft_strstr(s7a, s8a) == strstr(s7a, s8a) ? "Success" : "Fail");
 	printf("%s\\n", strcmp(s7a, s7b) == 0 && strcmp(s8a, s8b) == 0 ? "Success" : "Fail");
+	printf("%s:%s\\n", ft_strstr(s6a, s8a), strstr(s6a, s8a));
+	printf("%s\\n", ft_strstr(s6a, s8a) == strstr(s6a, s8a) ? "Success" : "Fail");
+	printf("%s\\n", strcmp(s6a, s6b) == 0 && strcmp(s8a, s8a) == 0 ? "Success" : "Fail");
     return (0);
 }
 """
@@ -304,7 +313,7 @@ int main(void)
 CompileTemp()
 print("#"*15,"Exec","#"*15)
 res = ExecuteCode()
-v2 = res.count("Success")==11
+v2 = res.count("Success")==13
 valid = valid and v2
 IfValid(v2)
 IfValid(valid,"Exo 4")
