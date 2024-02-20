@@ -24,6 +24,19 @@ elif name == "C_03":
 elif name == "C_04":
     from C_04.C_04 import *
 
+elif name == "C_05":
+    from C_05.C_05 import *
+
+elif name == "C_06":
+    from C_06.C_06 import *
+
+elif name == "C_07":
+    from C_07.C_07 import *
+
+
+
+elif name == "Rush01":
+    from Rush01.Rush01 import *
 
 else:
     print("Error argument")

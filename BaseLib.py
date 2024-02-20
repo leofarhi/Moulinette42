@@ -61,23 +61,48 @@ def ResetTempDir():
 def Join(path1,*paths):
     return os.path.join(path1,*paths)
 
-def CheckNorme(path):
-    result = Process(["norminette",Config.normeflag,path]).rstrip()
+def CheckNorme(path, count=1):
+    result = Process(["norminette",Config.normeflag,path]).stdout.rstrip()
     print(result)
-    return result==path+": OK!"
+    return result.count(": OK!") == count
 
 def Exec(string):
     os.system(string)
 
-def Process(cmd_list,**args):
-    result = subprocess.run(cmd_list, stdout=subprocess.PIPE,**args)
-    result = result.stdout.decode('utf-8')
-    return result
+class Stdout:
+    def __init__(self):
+        self.stdout = ""
+        self.stderr = ""
+
+    def __str__(self):
+        return self.stdout
+
+def Process(cmd_list,stderr=False,**args):
+    if stderr:
+        result = subprocess.run(cmd_list, stdout=subprocess.PIPE,stderr=subprocess.PIPE,**args)
+    else:
+        result = subprocess.run(cmd_list, stdout=subprocess.PIPE,**args)
+    stdout = Stdout()
+    stdout.stdout = result.stdout.decode('utf-8')
+    if stderr:
+        stdout.stderr = result.stderr.decode('utf-8')
+    return stdout
 
 def CopyToTemp(path):
     new_path = Join(tempDir,os.path.basename(path))
     shutil.copyfile(path,Join(tempDir,new_path))
     return new_path
+
+def CheckMemory(result, Print=True):
+    if Print:
+        print(result)
+    a = "LEAK SUMMARY" in result
+    if a:
+        PrintColor("Fuite de memoire",color_red)
+    b = "Conditional jump".lower() in result.lower()
+    if b:
+        PrintColor("Jump error",color_red)
+    return (not a) and (not b)
 
 def Pause():
     input()
@@ -92,25 +117,35 @@ def AutoMain(path,textH,textMain):
         fic.write(textMain)
     return h_file,main_file
 
+
+def CreateFileInTemp(name,text):
+    file = Join(tempDir,name)
+    with open(file,"w") as fic:
+        fic.write(text)
+    return file
+
 def CompileTemp(lib=""):
     if lib!="":
         lib+=" "
     os.chdir(tempDir)
     cmd = "cc -Wall -Wextra -Werror "+lib+"*.c -o Output"
-    Process(cmd,shell=True,cwd=tempDir)
+    result = Process(cmd,shell=True,cwd=tempDir)
 
-def ExecuteCode(args="",canPrint=True):
+def ExecuteCode(exc=[], args=[],canPrint=True,cat_e = False,returnAll = False):
     os.chdir(tempDir)
     cmd = "chmod +x Output"
     Process(cmd,shell=True,cwd=tempDir)
-    if args!="":
-        args = " "+args
-    cmd = "./Output"+args
-    result = Process(cmd,cwd=tempDir)
+    cmd = exc+["./Output"]+args
+    result = Process(cmd,cwd=tempDir, stderr=True)
     if canPrint:
-        print(result, end="")
+        res = result.stdout
+        if (cat_e):
+            res = res.replace("\n","$\n")
+        print(res, end="")
         PrintColor("%",'\033[4m')
-    return result
+    if returnAll:
+        return result
+    return result.stdout
 
 color_red='\033[93m'
 color_green='\033[92m'
