@@ -33,6 +33,9 @@ elif name == "C_06":
 elif name == "C_07":
     from C_07.C_07 import *
 
+elif name == "C_08":
+    from C_08.C_08 import *
+
 
 
 elif name == "Rush01":

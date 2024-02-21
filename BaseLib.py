@@ -62,7 +62,10 @@ def Join(path1,*paths):
     return os.path.join(path1,*paths)
 
 def CheckNorme(path, count=1):
-    result = Process(["norminette",Config.normeflag,path]).stdout.rstrip()
+    flags = []
+    if Config.normeflag != "":
+        flags = Config.normeflag.split(" ")
+    result = Process(["norminette"]+flags+[path]).stdout.rstrip()
     print(result)
     return result.count(": OK!") == count
 
@@ -93,7 +96,7 @@ def CopyToTemp(path):
     shutil.copyfile(path,Join(tempDir,new_path))
     return new_path
 
-def CheckMemory(result, Print=True):
+def CheckValgrind(result, Print=True):
     if Print:
         print(result)
     a = "LEAK SUMMARY" in result
@@ -102,15 +105,25 @@ def CheckMemory(result, Print=True):
     b = "Conditional jump".lower() in result.lower()
     if b:
         PrintColor("Jump error",color_red)
-    return (not a) and (not b)
+    c = not "== ERROR SUMMARY: 0 errors from 0 contexts" in result
+    if c:
+        PrintColor("valgrind error",color_red)
+    return (not a) and (not b) and (not c)
+
+#ancienne version
+def CheckMemory(*arg,**args):
+    return CheckValgrind(*arg,**args)
 
 def Pause():
     input()
 
 def AutoMain(path,textH,textMain):
-    h_file = Join(tempDir,os.path.splitext(os.path.basename(path))[0]+".h")
-    with open(h_file,"w") as fic:
-        fic.write(textH)
+    if path != None and textH != None:
+        h_file = Join(tempDir,os.path.splitext(os.path.basename(path))[0]+".h")
+        with open(h_file,"w") as fic:
+            fic.write(textH)
+    else:
+        h_file = None
 
     main_file = Join(tempDir,"main.c")
     with open(main_file,"w") as fic:
