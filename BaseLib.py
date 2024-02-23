@@ -34,9 +34,9 @@ def SaveConfig(key,value):
     with open(j,"w") as fic:
         fic.write(json.dumps(data, sort_keys=True, indent=4))
 
-def GetGitPath(exo):
+def GetGitPath(exo, force=False):
     path = LoadConfig(exo+"PATH_git")
-    if path == None:
+    if path == None or force:
         path = input("taper le chemin du repo "+exo+":")
     if not os.path.exists(path):
         print("Le chemin n'existe pas")
@@ -91,8 +91,12 @@ def Process(cmd_list,stderr=False,**args):
         stdout.stderr = result.stderr.decode('utf-8')
     return stdout
 
-def CopyToTemp(path):
-    new_path = Join(tempDir,os.path.basename(path))
+def CopyToTemp(path, subfolder=""):
+    direc = tempDir
+    if subfolder!="":
+        direc = Join(direc,subfolder)
+        MakeDir(direc)
+    new_path = Join(direc,os.path.basename(path))
     shutil.copyfile(path,Join(tempDir,new_path))
     return new_path
 
@@ -160,8 +164,10 @@ def ExecuteCode(exc=[], args=[],canPrint=True,cat_e = False,returnAll = False):
         return result
     return result.stdout
 
+
 color_red='\033[93m'
 color_green='\033[92m'
+color_blue = '\033[94m'
 
 def PrintColor(text,color):
     print(color+text+'\033[0m')
@@ -173,3 +179,8 @@ def IfValid(valid,title=""):
         PrintColor("Error ! "+title,color_red)
 
 tempDir = ResetTempDir()
+
+def PrintTree(cwd=tempDir):
+    res = str(Process(["tree"],cwd=cwd))
+    PrintColor(res,color_blue)
+    return res
