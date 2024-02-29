@@ -1,3 +1,5 @@
+# Cree par Lfarhi le 01/02/2024
+# Durant la piscine de 42
 import os,sys
 import subprocess
 import shutil
@@ -10,6 +12,7 @@ class Config:
         self.PATH_main = ""
         self.PATH_git = ""
         self.normeflag = ""
+        self.ExeName = "Output"
 Config = Config()
 
 def LoadConfig(key):
@@ -80,6 +83,13 @@ class Stdout:
     def __str__(self):
         return self.stdout
 
+def RandomText():
+    size = random.randint(0,100)
+    txt = ""
+    for i in range(size):
+        txt += chr(random.randint(32,126))
+    return txt
+
 def Process(cmd_list,stderr=False,**args):
     if stderr:
         result = subprocess.run(cmd_list, stdout=subprocess.PIPE,stderr=subprocess.PIPE,**args)
@@ -145,14 +155,14 @@ def CompileTemp(lib=""):
     if lib!="":
         lib+=" "
     os.chdir(tempDir)
-    cmd = "cc -Wall -Wextra -Werror "+lib+"*.c -o Output"
+    cmd = "cc -Wall -Wextra -Werror "+lib+"*.c -o "+Config.ExeName
     result = Process(cmd,shell=True,cwd=tempDir)
 
 def ExecuteCode(exc=[], args=[],canPrint=True,cat_e = False,returnAll = False):
     os.chdir(tempDir)
-    cmd = "chmod +x Output"
+    cmd = "chmod +x "+Config.ExeName
     Process(cmd,shell=True,cwd=tempDir)
-    cmd = exc+["./Output"]+args
+    cmd = exc+["./"+Config.ExeName]+args
     result = Process(cmd,cwd=tempDir, stderr=True)
     if canPrint:
         res = result.stdout

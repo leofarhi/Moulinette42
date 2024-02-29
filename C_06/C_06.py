@@ -85,8 +85,8 @@ IfValid(valid)
 temp_c = CopyToTemp(path_c)
 CompileTemp()
 print("#"*15,"Exec","#"*15)
-res = ExecuteCode(args=["a","B","C","AA","A","D",""])
-v2 = res=="\nA\nAA\nB\nC\nD\na\n"
+res = ExecuteCode(args=["a","B","C","AA","A","D","","12","1","123"])
+v2 = res=="\n1\n12\n123\nA\nAA\nB\nC\nD\na\n"
 valid = valid and v2
 
 res = ExecuteCode()

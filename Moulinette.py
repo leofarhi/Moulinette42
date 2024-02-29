@@ -1,3 +1,5 @@
+# Cree par Lfarhi le 01/02/2024
+# Durant la piscine de 42
 from BaseLib import *
 import sys
 
@@ -88,10 +90,16 @@ elif name == "C_09":
 elif name == "C_10":
     from C_10.C_10 import *
 
+elif name == "C_11":
+    from C_11.C_11 import *
+
 
 
 elif name == "Rush01":
     from Rush01.Rush01 import *
+
+elif name == "BSQ":
+    from BSQ.BSQ import *
 
 else:
     print("Error argument")
