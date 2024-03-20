@@ -162,3 +162,5 @@ cython_debug/
 
 temp/
 config.json
+BaseLibOld.py
+Projects/PiscineOld/*
