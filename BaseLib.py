@@ -32,10 +32,10 @@ class Colors:
     WHITE = '\033[97m'
     ENDC = '\033[0m'
 
-def PrintColor(text,color):
-    print(color+text+'\033[0m')
+def PrintColor(text,color,end="\n"):
+    print(color+text+'\033[0m',end=end)
 
-def IfValid(valid,title=""):
+def IfValid(valid,title="",end="\n"):
     if valid :
         PrintColor("OK ! "+title,Colors.GREEN)
     else:

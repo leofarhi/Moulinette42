@@ -32,6 +32,19 @@ def Print(project_id):
     else:
         print("Project not found")
 
+@Commande("all")
+def all(name=""):
+    Exec("clear")
+    path = os.path.abspath(os.path.join(Config.base_path,"Projects"))
+    files = []
+    for r, d, f in os.walk(path):
+        p = str(os.path.relpath(r, path))
+        if "__pycache__" in p or p=='.': continue
+        if name == "" or name.lower() in p.lower():
+            files.append(p.replace("/","."))
+    for i in files:
+        print(i)
+
 @Commande("path")
 def Path(project_id):
     GetGitPath(project_id, True)

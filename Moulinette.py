@@ -1,12 +1,12 @@
 # Cree par Lfarhi le 07/02/2024
 # Durant la piscine de 42
-from BaseLibOld import *
+from BaseLib import *
 from BaseExercise import *
 from Commandes import *
 import sys
 
 #sys.argv = ["Moulinette.py","print","Piscine.C_00"]
-sys.argv = ["Moulinette.py","Piscine.C_01"]
+#sys.argv = ["Moulinette.py","Piscine.C_01"]
 
 if len(sys.argv) < 2:
     print("Error argument")
