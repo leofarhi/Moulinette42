@@ -235,4 +235,5 @@ def ExecuteCode(exc=[], args=[],canPrint=True,cat_e = False,returnAll = False):
         res = result.stdout
     if Config.valgrind.active:
         CheckValgrind(result, Config.valgrind.print)
+        PrintColor("Valgrind Checked",Colors.YELLOW)
     return res

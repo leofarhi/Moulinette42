@@ -183,8 +183,18 @@ class Exo(BaseExercise):
         print(result)
         return result=="42"
     
+class BaseExercise_ft_putchar(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+
+    def Init(self):
+        super().Init()
+        file = os.path.join(Config.temp_path,"ft_putchar.c")
+        shutil.copyfile(Join(os.path.dirname(__file__),'ft_putchar.c'),file)
+        return True
+    
 @AddExercise(id="ex06")
-class Exo(BaseExercise):
+class Exo(BaseExercise_ft_putchar):
     def __init__(self, id):
         super().__init__(id)
 
@@ -203,7 +213,7 @@ int main(void)
         return ExecuteCode()=="abcdefghijklmnopqrstuvwxyz"
     
 @AddExercise(id="ex07")
-class Exo(BaseExercise):
+class Exo(BaseExercise_ft_putchar):
     def __init__(self, id):
         super().__init__(id)
 
@@ -222,7 +232,7 @@ int main(void)
         return ExecuteCode()=="0123456789"
     
 @AddExercise(id="ex08")
-class Exo(BaseExercise):
+class Exo(BaseExercise_ft_putchar):
     def __init__(self, id):
         super().__init__(id)
 
@@ -432,7 +442,7 @@ int main(void)
 """
 
 @AddExercise(id="ex15")
-class Exo(BaseExercise):
+class Exo(BaseExercise_ft_putchar):
     def __init__(self, id):
         super().__init__(id)
 
@@ -511,7 +521,7 @@ int main(void)
         return ExecuteCode().count("OK")==6
     
 @AddExercise(id="ex18")
-class Exo(BaseExercise):
+class Exo(BaseExercise_ft_putchar):
     def __init__(self, id):
         super().__init__(id)
 
@@ -524,7 +534,7 @@ class Exo(BaseExercise):
         return v and v2
     
 @AddExercise(id="ex19")
-class Exo(BaseExercise):
+class Exo(BaseExercise_ft_putchar):
     def __init__(self, id):
         super().__init__(id)
 
@@ -540,7 +550,11 @@ class Exo(BaseExercise):
 class Exo(BaseExercise):
     def __init__(self, id):
         super().__init__(id)
+        
+    def Init(self):
+        super().Init()
         Config.valgrind.active = True
+        return True
 
     def Compile(self):
         AutoMain(self.files["ft_strdup.c"],"char *ft_strdup(char *src);",
@@ -572,4 +586,317 @@ int main(void)
         return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode().stdout.count("OK") == 2
+        return ExecuteCode().count("OK") == 2
+    
+@AddExercise(id="ex21")
+class Exo(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+        
+    def Init(self):
+        super().Init()
+        Config.valgrind.active = True
+        return True
+
+    def Compile(self):
+        AutoMain(self.files["ft_range.c"],"int *ft_range(int min, int max);",
+"""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_range.h"
+
+void draw(int *range, int size)
+{
+    for(int i=0; i < size; i++)
+        printf("%d, ", range[i]);
+    printf("\\n");
+}
+
+int main(void)
+{
+    int *range;
+
+	range = ft_range(0, 5);
+	printf("0, 1, 2, 3, 4 : ");
+    draw(range,5);
+	free(range);
+	range = ft_range(3, 3);
+    if (range == NULL)
+    {
+        printf("NULL\\n");
+    }
+	
+	range = ft_range(-1, 1);
+	printf("-1, 0 :");
+    draw(range,2);
+    free(range);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode()=="""0, 1, 2, 3, 4 : 0, 1, 2, 3, 4, 
+NULL
+-1, 0 :-1, 0, 
+"""
+
+@AddExercise(id="ex22")
+class Exo(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+
+    def Init(self):
+        super().Init()
+        Config.normeflag = ["-R","CheckDefine"]
+        return True
+
+    def Compile(self):
+        AutoMain(None, None,
+"""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "ft_abs.h"
+
+int main(int argc, char **argv)
+{
+    (void)argc;
+    printf("%d\\n",ABS(atoi(argv[1])));
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        tests = [
+        ["-123"],
+        ["-2147483647"],
+        ["2147483647"],
+        ["0"]
+        ]
+        resTXT = ""
+        for i in tests:
+            res = ExecuteCode(args=i)
+            resTXT += res
+        return resTXT=="""123
+2147483647
+2147483647
+0
+"""
+
+@AddExercise(id="ex23")
+class Exo(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+
+    def Compile(self):
+        AutoMain(None, None,
+"""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "ft_point.h"
+
+void set_point(t_point *point)
+{
+    point->x = 42;
+    point->y = 21;
+}
+
+int main(void)
+{
+    t_point point;
+    set_point(&point);
+    printf("%d,%d", point.x, point.y);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode()=="42,21"
+    
+
+from . import ResultDirEx24 as ResTree24
+
+@AddExercise(id="ex24")
+class Exo(BaseExercise_ft_putchar):
+    def __init__(self, id):
+        super().__init__(id)
+
+    def Init(self):
+        super().Init()
+        MakeDir(Join(Config.temp_path,'srcs'))
+        MakeDir(Join(Config.temp_path,'includes'))
+        h_file = Join(Join(Config.temp_path,"includes"),"ft.h")
+        shutil.copyfile(Join(os.path.dirname(__file__),'ft_ex24.h'),h_file)
+        shutil.move(Join(Config.temp_path,'ft_putchar.c'),Join(Config.temp_path,'srcs','ft_putchar.c'))
+        files = ['ex10/ft_swap.c',
+        'ex17/ft_strcmp.c',
+        'ex15/ft_putstr.c',
+        'ex16/ft_strlen.c',]
+        for file in files:
+            file = Join(Config.project_path,file)
+            if not os.path.isfile(file):
+                PrintColor('file '+file+' not found',Colors.RED)
+                return False
+            PrintColor('file '+file+' copied',Colors.YELLOW)
+            self.files[file] = self.CopyToTemp(file,"srcs")
+        return True
+    
+    def Norme(self):
+        return CheckNorme(Config.temp_path)
+
+    def Compile(self):
+        v = True
+        print("#"*5,"make","#"*5)
+        print(Process(["make"],cwd=Config.temp_path))
+        v = v and IfValid(ResTree24.make==PrintTree())
+
+        print("#"*5,"make fclean","#"*5)
+        print(Process(["make","fclean"],cwd=Config.temp_path))
+        v = v and IfValid(ResTree24.make_fclean==PrintTree())
+
+        print("#"*5,"make all","#"*5)
+        print(Process(["make","all"],cwd=Config.temp_path))
+        v = v and IfValid(ResTree24.make_all==PrintTree())
+
+        print("#"*5,"make clean","#"*5)
+        print(Process(["make","clean"],cwd=Config.temp_path))
+        v = v and IfValid(ResTree24.make_clean==PrintTree())
+
+        print("#"*5,"make re","#"*5)
+        print(Process(["make","re"],cwd=Config.temp_path))
+        v = v and IfValid(ResTree24.make_re==PrintTree())
+
+        print("#"*5,"make fclean","#"*5)
+        v = v and print(Process(["make","fclean"],cwd=Config.temp_path))
+
+        print("#"*5,"make libft.a","#"*5)
+        print(Process(["make","libft.a"],cwd=Config.temp_path))
+        v = v and IfValid(ResTree24.make_libft_a==PrintTree())
+        return v
+
+    def Execute(self):
+        return True
+    
+
+@AddExercise(id="ex25")
+class Exo(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+
+    def Compile(self):
+        self.vals = [0]+[-2147483648]+[2147483647]+[random.randint(-10000,0) for i in range (15)]+[random.randint(0,10000) for i in range (15)]
+        AutoMain(self.files["ft_foreach.c"],"void ft_foreach(int *tab, int length, void (*f)(int));",
+"""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_foreach.h"
+
+void ft_putnbr(int nb)
+{
+    printf("%d\\n", nb);
+}
+
+int main(void)
+{
+    static int len = """+str(len(self.vals))+""";
+    int vals["""+str(len(self.vals))+"""] = """+str(self.vals).replace("[","{").replace("]","}")+""";
+
+    ft_foreach(vals, len, &ft_putnbr);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode()==("\n".join([str(i) for i in self.vals]))+"\n"
+    
+@AddExercise(id="ex26")
+class Exo(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+    
+    def Init(self):
+        super().Init()
+        #Config.valgrind.print = True
+        Config.valgrind.active = True
+        return True
+
+    def Compile(self):
+        AutoMain(self.files["ft_count_if.c"],"int ft_count_if(char **tab, int (*f)(char*));",
+"""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_count_if.h"
+
+int find(char *str)
+{
+    int index = 0;
+    char c[2] = "X";
+    while (str[index] != '\\0')
+    {
+        c[0] = str[index];
+        if (atoi(c))
+            return 1;
+        index++;
+    }
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    argv[argc-1] = 0;
+    printf("%d\\n",ft_count_if(argv + 1 ,&find));
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        tests = [
+    ["1255","876045","40405"],
+    [],
+    ["00000"],
+    ["00000", "1145"]
+]
+        res = ""
+        for test in tests:
+            res+=ExecuteCode(args=test+["NULL"])
+        return res=="""3
+0
+0
+1
+"""
+
+
+@AddExercise(id="ex27")
+class Exo(BaseExercise):
+    def __init__(self, id):
+        super().__init__(id)
+        
+    def Init(self):
+        super().Init()
+        Config.valgrind.active = True
+        return True
+
+    def Compile(self):
+        print("#"*5,"make","#"*5)
+        print(Process(["make"],cwd=Config.temp_path))
+        return "ft_display_file" in os.listdir(Config.temp_path)
+
+    def Execute(self):
+        Config.output_name = 'ft_display_file'
+        return ExecuteCode()==0
