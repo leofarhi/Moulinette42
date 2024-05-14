@@ -349,6 +349,9 @@ int main(void)
 	printf("1:%d\\n", ft_iterative_factorial(1));
 	printf("3628800:%d\\n", ft_iterative_factorial(10));
 	printf("6:%d\\n", ft_iterative_factorial(3));
+    printf("0:%d\\n", ft_iterative_factorial(25));
+    printf("479001600:%d\\n", ft_iterative_factorial(12));
+    printf("0:%d\\n", ft_iterative_factorial(13));
     return (0);
 }
 """)
@@ -361,6 +364,9 @@ int main(void)
 1:1
 3628800:3628800
 6:6
+0:0
+479001600:479001600
+0:0
 """
     
 @AddExercise(id="ex13")
@@ -384,6 +390,9 @@ int main(void)
 	printf("1:%d\\n", ft_recursive_factorial(1));
 	printf("3628800:%d\\n", ft_recursive_factorial(10));
 	printf("6:%d\\n", ft_recursive_factorial(3));
+	printf("0:%d\\n", ft_recursive_factorial(25));
+	printf("479001600:%d\\n", ft_recursive_factorial(12));
+	printf("0:%d\\n", ft_recursive_factorial(13));
     return (0);
 }
 """)
@@ -396,6 +405,9 @@ int main(void)
 1:1
 3628800:3628800
 6:6
+0:0
+479001600:479001600
+0:0
 """
 
 @AddExercise(id="ex14")
