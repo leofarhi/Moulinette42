@@ -26,14 +26,14 @@ class Exo(BaseExercise):
     def Execute(self):
         valid = True
         result = str(Process(["ls",'-l'],cwd=Config.temp_path, stderr=True)).replace("\r\n","\n").replace("\r","\n")
-        Want="""total 42
+        Want="""total XX
 drwx--xr-x 2 XX XX XX Jun 1 XX test0
 -rwx--xr-- 1 XX XX 4 Jun 1 XX test1
 dr-x---r-- 2 XX XX XX Jun 1 XX test2
 -r-----r-- 2 XX XX 1 Jun 1 XX test3
 -rw-r----x 1 XX XX 2 Jun 1 XX test4
 -r-----r-- 2 XX XX 1 Jun 1 XX test5
-lrwxr-xr-x 1 XX XX 5 Jun 1 XX test6 -> test0"""
+XX 1 XX XX 5 Jun 1 XX test6 -> test0"""
         lns = result.split("\n")
         lines = []
         for line in lns:
@@ -694,6 +694,11 @@ class Exo(BaseExercise):
     def __init__(self, id):
         super().__init__(id)
 
+    def Init(self):
+        super().Init()
+        Config.normeflag = ["-R","CheckForbiddenSourceHeader"]
+        return True
+
     def Compile(self):
         AutoMain(None, None,
 """
@@ -751,6 +756,9 @@ class Exo(BaseExercise_ft_putchar):
             self.files[file] = self.CopyToTemp(file,"srcs")
         return True
     
+    def GetFiles(self, path):
+        return [d + f for _, d, f in os.walk(path)]
+    
     def Norme(self):
         return CheckNorme(Config.temp_path)
 
@@ -758,30 +766,38 @@ class Exo(BaseExercise_ft_putchar):
         v = True
         print("#"*5,"make","#"*5)
         print(Process(["make"],cwd=Config.temp_path))
-        v = v and IfValid(ResTree24.make==PrintTree())
+        PrintTree()
+        v = IfValid(str(ResTree24.make)==str(self.GetFiles(Config.temp_path))) and v
 
         print("#"*5,"make fclean","#"*5)
         print(Process(["make","fclean"],cwd=Config.temp_path))
-        v = v and IfValid(ResTree24.make_fclean==PrintTree())
+        PrintTree()
+        v = IfValid(str(ResTree24.make_fclean)==str(self.GetFiles(Config.temp_path))) and v
 
         print("#"*5,"make all","#"*5)
         print(Process(["make","all"],cwd=Config.temp_path))
-        v = v and IfValid(ResTree24.make_all==PrintTree())
-
+        PrintTree()
+        v = IfValid(str(ResTree24.make_all)==str(self.GetFiles(Config.temp_path))) and v
+    
         print("#"*5,"make clean","#"*5)
         print(Process(["make","clean"],cwd=Config.temp_path))
-        v = v and IfValid(ResTree24.make_clean==PrintTree())
+        PrintTree()
+        v = IfValid(str(ResTree24.make_clean)==str(self.GetFiles(Config.temp_path))) and v
 
         print("#"*5,"make re","#"*5)
         print(Process(["make","re"],cwd=Config.temp_path))
-        v = v and IfValid(ResTree24.make_re==PrintTree())
-
+        PrintTree()
+        v = IfValid(str(ResTree24.make_re)==str(self.GetFiles(Config.temp_path))) and v
+    
         print("#"*5,"make fclean","#"*5)
-        v = v and print(Process(["make","fclean"],cwd=Config.temp_path))
+        print(Process(["make","fclean"],cwd=Config.temp_path))
 
         print("#"*5,"make libft.a","#"*5)
         print(Process(["make","libft.a"],cwd=Config.temp_path))
-        v = v and IfValid(ResTree24.make_libft_a==PrintTree())
+        PrintTree()
+        v = IfValid(str(ResTree24.make_libft_a)==str(self.GetFiles(Config.temp_path))) and v
+
+        #print(self.GetFiles(Config.temp_path))    
         return v
 
     def Execute(self):
@@ -899,4 +915,13 @@ class Exo(BaseExercise):
 
     def Execute(self):
         Config.output_name = 'ft_display_file'
-        return ExecuteCode()==0
+        file = Join(Config.temp_path,"text.txt")
+        shutil.copyfile(Join(os.path.dirname(__file__),"text.txt"),file)
+        with open(file,"r") as fic:
+            txt = fic.read()
+        v = True
+        v = v and "File name missing.\n" in ExecuteCode(args=[], returnAll= True).stderr
+        v = v and "Too many arguments.\n" in ExecuteCode(args=["text.txt","text.txt"], returnAll= True).stderr
+        v = v and "Cannot read file.\n" in ExecuteCode(args=["nothing.txt"], returnAll= True).stderr
+        v = v and ExecuteCode(args=["text.txt"])==txt
+        return v

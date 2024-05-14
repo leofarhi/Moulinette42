@@ -1,116 +1,13 @@
 
 
-make = \
-""".
-├── includes
-│   └── ft.h
-├── libft.a
-├── Makefile
-└── srcs
-    ├── ft_putchar.c
-    ├── ft_putchar.o
-    ├── ft_putstr.c
-    ├── ft_putstr.o
-    ├── ft_strcmp.c
-    ├── ft_strcmp.o
-    ├── ft_strlen.c
-    ├── ft_strlen.o
-    ├── ft_swap.c
-    └── ft_swap.o
+make = [['srcs', 'includes', 'Makefile', 'libft.a'], ['ft_putchar.c', 'ft_swap.c', 'ft_strcmp.c', 'ft_putstr.c', 'ft_strlen.c', 'ft_putchar.o', 'ft_swap.o', 'ft_putstr.o', 'ft_strlen.o', 'ft_strcmp.o'], ['ft.h']]
 
-2 directories, 13 files
-"""
+make_fclean = [['srcs', 'includes', 'Makefile'], ['ft_putchar.c', 'ft_swap.c', 'ft_strcmp.c', 'ft_putstr.c', 'ft_strlen.c'], ['ft.h']]
 
-make_fclean = \
-""".
-├── includes
-│   └── ft.h
-├── Makefile
-└── srcs
-    ├── ft_putchar.c
-    ├── ft_putstr.c
-    ├── ft_strcmp.c
-    ├── ft_strlen.c
-    └── ft_swap.c
+make_all = [['srcs', 'includes', 'Makefile', 'libft.a'], ['ft_putchar.c', 'ft_swap.c', 'ft_strcmp.c', 'ft_putstr.c', 'ft_strlen.c', 'ft_putchar.o', 'ft_swap.o', 'ft_putstr.o', 'ft_strlen.o', 'ft_strcmp.o'], ['ft.h']]
 
-2 directories, 7 files
-"""
+make_clean = [['srcs', 'includes', 'Makefile', 'libft.a'], ['ft_putchar.c', 'ft_swap.c', 'ft_strcmp.c', 'ft_putstr.c', 'ft_strlen.c'], ['ft.h']]
 
-make_all = \
-""".
-├── includes
-│   └── ft.h
-├── libft.a
-├── Makefile
-└── srcs
-    ├── ft_putchar.c
-    ├── ft_putchar.o
-    ├── ft_putstr.c
-    ├── ft_putstr.o
-    ├── ft_strcmp.c
-    ├── ft_strcmp.o
-    ├── ft_strlen.c
-    ├── ft_strlen.o
-    ├── ft_swap.c
-    └── ft_swap.o
+make_re = [['srcs', 'includes', 'Makefile', 'libft.a'], ['ft_putchar.c', 'ft_swap.c', 'ft_strcmp.c', 'ft_putstr.c', 'ft_strlen.c', 'ft_putchar.o', 'ft_swap.o', 'ft_putstr.o', 'ft_strlen.o', 'ft_strcmp.o'], ['ft.h']]
 
-2 directories, 13 files
-"""
-
-make_clean = \
-""".
-├── includes
-│   └── ft.h
-├── libft.a
-├── Makefile
-└── srcs
-    ├── ft_putchar.c
-    ├── ft_putstr.c
-    ├── ft_strcmp.c
-    ├── ft_strlen.c
-    └── ft_swap.c
-
-2 directories, 8 files
-"""
-
-make_re = \
-""".
-├── includes
-│   └── ft.h
-├── libft.a
-├── Makefile
-└── srcs
-    ├── ft_putchar.c
-    ├── ft_putchar.o
-    ├── ft_putstr.c
-    ├── ft_putstr.o
-    ├── ft_strcmp.c
-    ├── ft_strcmp.o
-    ├── ft_strlen.c
-    ├── ft_strlen.o
-    ├── ft_swap.c
-    └── ft_swap.o
-
-2 directories, 13 files
-"""
-
-make_libft_a = \
-""".
-├── includes
-│   └── ft.h
-├── libft.a
-├── Makefile
-└── srcs
-    ├── ft_putchar.c
-    ├── ft_putchar.o
-    ├── ft_putstr.c
-    ├── ft_putstr.o
-    ├── ft_strcmp.c
-    ├── ft_strcmp.o
-    ├── ft_strlen.c
-    ├── ft_strlen.o
-    ├── ft_swap.c
-    └── ft_swap.o
-
-2 directories, 13 files
-"""
+make_libft_a = [['srcs', 'includes', 'Makefile', 'libft.a'], ['ft_putchar.c', 'ft_swap.c', 'ft_strcmp.c', 'ft_putstr.c', 'ft_strlen.c', 'ft_putchar.o', 'ft_swap.o', 'ft_putstr.o', 'ft_strlen.o', 'ft_strcmp.o'], ['ft.h']]

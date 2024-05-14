@@ -40,6 +40,7 @@ def IfValid(valid,title="",end="\n"):
         PrintColor("OK ! "+title,Colors.GREEN)
     else:
         PrintColor("Error ! "+title,Colors.RED)
+    return valid
 
 def Join(path1,*paths):
     return os.path.join(path1,*paths)
