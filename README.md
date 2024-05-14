@@ -1,3 +1,14 @@
+### Disclaimer !
+
+#### À l'attention de l'administration de 42 :
+
+Ce projet est une initiative personnelle réalisée en parallèle de mes projets. Il m'aide à réduire mes erreurs et à aller plus vite. Je le mets à disposition de tous, mais si cela pose problème, faites-le-moi savoir.
+
+#### À l'attention des élèves :
+
+Évitez, si possible, d'utiliser ce testeur. La piscine est là pour vous aider à apprendre de vos erreurs et à échanger.
+
+
 ### Moulinette 42 - Février 2024
 
 Cette moulinette a été conçue pendant la piscine de février 2024 à l'école 42.
