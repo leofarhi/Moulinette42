@@ -1,6 +1,6 @@
 from BaseLib import *
 class BaseExercise:
-    def __init__(self, id):
+    def __init__(self, id, *args, **kargs):
         self.id = id
         self.path = Join(Config.project_path,self.id)
         self.files = {}
@@ -29,9 +29,9 @@ class BaseExercise:
 
 Exercises = {}
 
-def AddExercise(id):
+def AddExercise(id, *args, **kargs):
     def decorator(classType):
-        Exercises[id] = classType(id)
+        Exercises[id] = classType(id, *args, **kargs)
         return classType
     return decorator
 
@@ -40,7 +40,7 @@ def BetterId(id):
     id = str(id)
     string = ""
     i = 0
-    while id[i].isalpha():
+    while i < len(id) and id[i].isalpha():
         string += id[i]
         i += 1
     string += " "

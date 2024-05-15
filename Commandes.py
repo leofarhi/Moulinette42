@@ -1,4 +1,5 @@
 from BaseLib import *
+from BaseExercise import Exercises
 Commandes = {}
 
 def AddCommande(name, func):
@@ -41,9 +42,18 @@ def all(name=""):
         p = str(os.path.relpath(r, path))
         if "__pycache__" in p or p=='.': continue
         if name == "" or name.lower() in p.lower():
-            files.append(p.replace("/","."))
+            if os.path.basename(r)+".py" in f:
+                files.append(p.replace("/","."))
     for i in files:
-        print(i)
+        PrintColor(i,Colors.YELLOW)
+        
+@Commande("exo")
+def Print(project_id):
+    Exec("clear")
+    spec = importlib.import_module(f"Projects.{project_id}.{project_id.split('.')[-1]}")
+    print('#'*5)
+    for i in Exercises:
+        PrintColor(i,Colors.YELLOW)
 
 @Commande("path")
 def Path(project_id):
