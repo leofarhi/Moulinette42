@@ -82,7 +82,7 @@ int main(int argc, char **argv)
         return CompileTemp()
 
     def Execute(self):
-        tests= [" \t\v\n\r\f9","     -5","125", "", "-5", "--8","+9","++9","a38",'12f5g9','-0','2147483647','2147483648',"-2147483648","-2147483649"]
+        tests= [" \t\v\n\r\f9","     -5","125", "", "-5","+-5","-+5", "--8","+9","++9","a38",'12f5g9','-0','2147483647','2147483648',"-2147483648","-2147483649"]
         v = True
         for test in tests:
             print(test)
@@ -95,12 +95,47 @@ int main(int argc, char **argv)
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_bzero.c"],"void	ft_bzero(void *s, size_t n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_bzero.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *str1 = strdup(argv[1]);
+    char *str2 = strdup(argv[1]);
+    size_t len = strlen(argv[1]);
+    ft_bzero(str1,len);
+    bzero(str2,len);
+    printf("res: %s\\n",str1);
+    if (memcmp(str1,str2,len) == 0)
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(str1);
+    free(str2);
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [""]
+        for i in range(10):
+            t = ""
+            for o in range(randint(0,80)):
+                t+=chr(randint(32,126))
+            tests.append(t)
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=[test])
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="calloc", file=["ft_calloc.c"])
 class Exo(BaseExerciseLibft):
@@ -153,6 +188,7 @@ int main(int argc, char **argv)
             ["4","10"],
             ["65536","2"],
             ["2","4294967295"],
+            ["4294967295","2"],
             ["4294967295","4294967295"],
         ]
         res=[
@@ -163,6 +199,7 @@ int main(int argc, char **argv)
             "OK",
             "OK",
             "OK",
+            "NULL",
             "NULL",
             "NULL",
         ]
@@ -343,78 +380,336 @@ int main(void)
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_memchr.c"],"void	*ft_memchr(const void *s, int c, size_t n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_memchr.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    unsigned char *str = (unsigned char *)argv[1];
+    int c = (int)argv[2][0];
+    size_t n = strlen(argv[1]);
+    long int res = (unsigned char *)ft_memchr(str,c,n) - str;
+    printf("ft_memchr %ld\\n",res < 0 ? -1 : res);
+    if (memchr(str,c,n) == ft_memchr(str,c,n))
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [["","a"],["b","a"],["a","a"]]
+        for i in range(10):
+            t = ""
+            for o in range(randint(40,80)):
+                t+=chr(randint(32,126))
+            tests.append([t,chr(randint(32,126))])
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=test)
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="memcmp", file=["ft_memcmp.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_memcmp.c"],"int	ft_memcmp(const void *s1, const void *s2, size_t n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_memcmp.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    unsigned char *str = (unsigned char *)argv[1];
+    unsigned char *str2 = (unsigned char *)argv[2];
+    size_t n = strlen(argv[1]);
+    printf("ft_memcmp %d\\n",ft_memcmp(str,str2,n));
+    if (memcmp(str,str2,n) == ft_memcmp(str,str2,n))
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [["","a"],["b","a"],["a","a"],["a","b"],["aa","a"],["a","aa"],["aA","aa"],["aa","aA"]]
+        for i in range(10):
+            t = ""
+            for o in range(randint(40,80)):
+                t+=chr(randint(32,126))
+            t2 = ""
+            for o in range(randint(40,80)):
+                t2+=chr(randint(32,126))
+            tests.append([t,t2])
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=test)
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="memcpy", file=["ft_memcpy.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_memcpy.c"],"void	*ft_memcpy(void *dest, const void *src, size_t n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_memcpy.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    unsigned char *str = (unsigned char *)argv[1];
+    size_t n = strlen(argv[1]);
+    unsigned char *cp1 = malloc(n);
+    unsigned char *cp2 = malloc(n);
+    ft_memcpy(cp1,str,n);
+    memcpy(cp2,str,n);
+    if (memcmp(cp1,cp2,n) == 0)
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(cp1);
+    free(cp2);
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [""]
+        for i in range(10):
+            t = ""
+            for o in range(randint(40,80)):
+                t+=chr(randint(32,126))
+            tests.append(t)
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=[test])
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="memmove", file=["ft_memmove.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_memmove.c"],"void	*ft_memmove(void *dest, const void *src, size_t n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_memmove.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    unsigned char *str = (unsigned char *)argv[1];
+    size_t n = strlen(argv[1]);
+    int decal = atoi(argv[2]);
+    int size = n*2 + abs(decal) + 1;
+    unsigned char *cp1 = malloc(size);
+    unsigned char *cp2 = malloc(size);
+    memset(cp1,'#',size); memset(cp2,'#',size);
+    cp1[size-1] = 0; cp2[size-1] = 0;
+    memcpy((char *)cp1 + (decal < 0 ? abs(decal) : 0),(char *)str,n);
+    memcpy((char *)cp2 + (decal < 0 ? abs(decal) : 0),(char *)str,n);
+    printf("mem:       %s\\n",cp1);
+    if (decal < 0)
+    {
+        ft_memmove(cp1,cp1+abs(decal),n);
+        memmove(cp2,cp2+abs(decal),n);
+    }
+    else
+    {
+        ft_memmove(cp1+abs(decal),cp1,n);
+        memmove(cp2+abs(decal),cp2,n);
+    }
+    printf("ft_memmove %s\\n",cp1);
+    printf("memmove    %s\\n",cp2);
+    if (memcmp(cp1,cp2,size) == 0)
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(cp1);
+    free(cp2);
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [["","-5"],["","5"],["a","1"],["a","-1"],["a","0"], ["aBC","1"],["aBC","-1"],["aBC","0"],["aBC","5"],["aBC","-5"]]
+        for i in range(10):
+            t = ""
+            for o in range(randint(0,20)):
+                t+=chr(randint(36,126))
+            tests.append([t,str(randint(-10,10))])
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=test)
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="memset", file=["ft_memset.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_memset.c"],"void	*ft_memset(void *s, int c, size_t n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_memset.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *str = argv[1];
+    size_t n = strlen(str);
+    char *cp1 = strdup(str);
+    char *cp2 = strdup(str);
+    int c = argv[2][0];
+    printf("str:      %s\\n",str);
+    printf("c:        %c\\n",c);
+    ft_memset(cp1,c,n);
+    memset(cp2,c,n);
+    printf("ft_memset %s\\n",cp1);
+    printf("memset    %s\\n",cp2);
+    if (memcmp(cp1,cp2,n) == 0)
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(cp1);
+    free(cp2);
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [["","*"],["Hello","*"],["Hello","a"]]
+        for i in range(10):
+            t = ""
+            for o in range(randint(0,80)):
+                t+=chr(randint(32,126))
+            tests.append([t,chr(randint(32,126))])
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=test)
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="strchr", file=["ft_strchr.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_strchr.c"],"char	*ft_strchr(const char *s, int c);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "ft_strchr.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char c = (char)atoi(argv[2]);
+    char *str = argv[1];
+    printf("ft_strchr %p\\n",ft_strchr(str,c));
+    printf("strchr    %p\\n",strchr(str,c));
+    if (ft_strchr(str,c) == strchr(str,c))
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [["",str(ord(" "))],["","0"],["abcde",str(ord("A"))],["abcdeA",str(ord("A"))],["AabcdeA",str(ord("A"))],["AabcdeA","0"]]
+        for i in range(10):
+            t = ""
+            for o in range(randint(40,80)):
+                t+=chr(randint(32,126))
+            tests.append([t,str(randint(-1,128))])
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=test)
+            v =  r and v
+            print("-"*10)
+        return v
 
-@AddExercise(id="strdup", file=["ft_strdup.c"])
+@AddExercise(id="strdup", file=["ft_strdup.c","ft_strlen.c","ft_strlcpy.c","ft_memcpy.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_strdup.c"],"char	*ft_strdup(const char *s);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_strdup.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *str = argv[1];
+    char *cp1 = strdup(str);
+    printf("str:      %s\\n",str);
+    printf("ft_strdup %s\\n",cp1);
+    int n = strlen(str);
+    if (memcmp(cp1,str,n+1) == 0)
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(cp1);
+    return (0);
+}
+""")
+        return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= ["", "Hello"]
+        for i in range(10):
+            t = ""
+            for o in range(randint(0,80)):
+                t+=chr(randint(32,126))
+            tests.append(t)
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=[test])
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="strlcat", file=["ft_strlcat.c","ft_strlen.c"])
 class Exo(BaseExerciseLibft):
