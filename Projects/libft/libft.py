@@ -1278,7 +1278,7 @@ int main(int argc, char **argv)
         return CompileTemp()
 
     def Execute(self):
-        tests= [0, -1 , 1, 20, 2147483647, -2147483648]
+        tests= [0, -1 , 1, 20, 2147483647, -2147483648, 147483647, -147483647]
         for i in range(10):
             t = randint(-2147483648,2147483647)
             tests.append(t)
@@ -1369,7 +1369,7 @@ int main(int argc, char **argv)
             print(test)
             expected = "|".join([x for x in test[0].split(test[1][0]) if x])
             expected = "#"+expected+("|" if len(expected) > 0 else "")+"#"
-            print(expected)
+            print("expected :", expected)
             r = expected in ExecuteCode(args=test)
             PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
             v =  r and v
@@ -1381,33 +1381,140 @@ int main(int argc, char **argv)
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files[".c"],)
+        AutoMain(self.files["ft_striteri.c"],"void	ft_striteri(char *s, void (*f)(unsigned int, char*));","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_striteri.h"
+                 
+void cesar(unsigned int idx, char* c)
+{
+    *c = ((*c + idx) % 26) + 'a';
+}
+
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *str = strdup(argv[1]);
+    ft_striteri(str,&cesar);
+    printf("%s\\n",str);
+    free(str);
+    return (0);
+}
+""")
         return CompileTemp()
+    
+    def cesar(self, txt):
+        nexTxt = ""
+        for idx,c in enumerate(txt):
+            nexTxt += chr(((ord(c) + idx) % 26) + ord('a'))
+        return nexTxt
 
     def Execute(self):
-        return ExecuteCode() == 0
+        tests= ["azAZyywtgefgsdgfgshfgAIUISDShhgeryrgyer56565645"]
+        v = True
+        tests = [str(i) for i in tests]
+        for test in tests:
+            print(test)
+            expected = self.cesar(test)
+            PrintColor("expected :\n"+expected,Colors.YELLOW)
+            r = expected+"\n" == ExecuteCode(args=[test])
+            PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
+            v =  r and v
+            print("-"*10)
+        return v
 
 
-@AddExercise(id="strjoin", file=["ft_strjoin.c"])
+@AddExercise(id="strjoin", file=["ft_strjoin.c","ft_strlen.c","ft_strlcpy.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files[".c"],)
+        AutoMain(self.files["ft_strjoin.c"],"char	*ft_strjoin(char const *s1, char const *s2);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_strjoin.h"
+
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *res = ft_strjoin(argv[1],argv[2]);
+    printf("%s\\n",res);
+    free(res);
+    return (0);
+}
+""")
         return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode() == 0
+        tests = [
+    [", ", "aaa"],
+    ["Hello ", "World"],
+    ["a",""],
+    ["a","",""],
+    ["", "aaa"],
+    ["", ""]
+]
+        v = True
+        for test in tests:
+            print(test)
+            expected = ''.join(test)
+            PrintColor("expected :\n"+expected,Colors.YELLOW)
+            r = expected+"\n" == ExecuteCode(args=test)
+            PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
+            v =  r and v
+            print("-"*10)
+        return v
 
 
-@AddExercise(id="strmapi", file=["ft_strmapi.c"])
+@AddExercise(id="strmapi", file=["ft_strmapi.c","ft_strlen.c","ft_strlcpy.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files[".c"],)
+        AutoMain(self.files["ft_strmapi.c"],"char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_strmapi.h"
+                 
+char cesar(unsigned int idx, char c)
+{
+    return ((c + idx) % 26) + 'a';
+}
+
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *str = ft_strmapi(argv[1],&cesar);
+    printf("%s\\n",str);
+    free(str);
+    return (0);
+}
+""")
         return CompileTemp()
+    
+    def cesar(self, txt):
+        nexTxt = ""
+        for idx,c in enumerate(txt):
+            nexTxt += chr(((ord(c) + idx) % 26) + ord('a'))
+        return nexTxt
 
     def Execute(self):
-        return ExecuteCode() == 0
+        tests= ["azAZyywtgefgsdgfgshfgAIUISDShhgeryrgyer56565645"]
+        v = True
+        tests = [str(i) for i in tests]
+        for test in tests:
+            print(test)
+            expected = self.cesar(test)
+            PrintColor("expected :\n"+expected,Colors.YELLOW)
+            r = expected+"\n" == ExecuteCode(args=[test])
+            PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
+            v =  r and v
+            print("-"*10)
+        return v
 
 
 @AddExercise(id="strtrim", file=["ft_strtrim.c"])
