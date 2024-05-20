@@ -207,6 +207,7 @@ def CompileTemp(lib=""):
         cmd = "cc -Wall -Wextra -Werror "+lib+"*.c -o "+Config.output_name
     elif get_os() == "Windows":
         cmd = "gcc -Wall -Wextra -Werror "+lib+"*.c -o "+Config.output_name+".exe"
+    print(cmd)
     result = Process(cmd,stderr=True,shell=True,cwd=Config.temp_path)
     print(result.stdout)
     if result.stderr:

@@ -74,7 +74,10 @@ def Git(project_id):
 
 @Commande("cd")
 def Cd(project_id):
-    path = GetGitPath(project_id)
+    if project_id=='temp':
+        path = Config.temp_path
+    else:
+        path = GetGitPath(project_id)
     print("path :",path)
     if path == None:
         print("Project not found")
@@ -83,7 +86,7 @@ def Cd(project_id):
             Exec(f'bash -c "cd {path}; exec bash"')
         elif get_os() == "Windows":
             Exec(f'cmd /k "cd {path}"')
-
+            
 @Commande("norme")
 def Norme(project_id):
     path = GetGitPath(project_id)

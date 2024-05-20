@@ -9,6 +9,16 @@ Config.normeflag = ["-R","CheckForbiddenSourceHeader"]
 PrintColor("Cette correction est cours de creation !", Colors.RED)
 
 
+def IsPartResetDico(part):
+    global IsPartResetDico
+    if len(sys.argv) > 2:
+        if sys.argv[2].startswith("part"):
+            Exercises.clear()
+        if part == sys.argv[2]:
+            IsPartResetDico = lambda *args: None
+
+IsPartResetDico('part1')
+
 class BaseExerciseLibft(BaseExercise):
     def __init__(self, id, file=None):
         super().__init__(id)
@@ -16,7 +26,8 @@ class BaseExerciseLibft(BaseExercise):
         if file==None:
             lst = []
             for i in os.listdir(Config.project_path):
-                if i.endswith(("ft_.c",".h")):
+                if (os.path.isfile(Join(Config.project_path,i))):
+                #if i.endswith((".c",".h")):
                     lst.append(i)
             self.base_files = lst
         else:
@@ -47,9 +58,9 @@ class BaseExerciseLibft(BaseExercise):
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],)
-        #return CompileTemp()
-        print(self.files)
+        print("#"*5,"make","#"*5)
+        print(Process(["make"],cwd=Config.temp_path))
+        #print(self.files)
         return True
 
     def Execute(self):
@@ -957,23 +968,119 @@ int main(void)
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
+        AutoMain(self.files["ft_strnstr.c"],"char	*ft_strnstr(const char *big, const char *little, size_t len);","""
+#include <stdio.h>
+#include <bsd/string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "ft_strnstr.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char* big = argv[1];
+    char* little = argv[2];
+    size_t len = atoi(argv[3]);
+    printf("ft_strnstr %s\\n",ft_strnstr(big,little,len));
+    printf("strnstr    %s\\n",strnstr(big,little,len));
+    if (ft_strnstr(big,little,len) == strnstr(big,little,len))
+		printf("%s","OK\\n");
+	else
+		printf("%s","WRONG\\n");
+    return (0);
+}
+""")
+        return CompileTemp(lib="-lbsd -lc")
 
     def Execute(self):
-        return ExecuteCode()==0
+        tests= [
+            ["","",0],
+            ["","",5],
+            ["","aa",5],
+            ["aa","",5],
+            ["aa","a",5],
+            ["aa","a",0],
+            ["aafgbsfgfdghjhrgghbsd","9",10],
+            ["aafgbsfgfdghjhrgghbsd","gfdg",4],
+            ["aafgbsfgfdghjhrgghbsd","gfdg",40],
+            ["aafgbsfgfdghjhrgghbsd","gfdg",2],
+            ["aafgbsfgfdghjhrgghbsd","afg",2],
+                ]
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=[str(i) for i in test])
+            v =  r and v
+            print("-"*10)
+        return v
 
-@AddExercise(id="strrchr", file=["ft_strrchr.c"])
+@AddExercise(id="strrchr", file=["ft_strrchr.c","ft_strlen.c",])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files["ft_.c"],"",)
-        #return CompileTemp()
-        return False
-
+        AutoMain(self.files["ft_strrchr.c"],"char	*ft_strrchr(const char *s, int c);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+#include "ft_strrchr.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char* str = argv[1];
+    if (strcmp(str,"NULL")==0)
+        str = NULL;
+    int c = atoi(argv[2]);
+    int int_res = atoi(argv[3]);
+    printf("%s %c %d\\n",str,c,int_res);
+    char* res = (int_res >= 0)? str+int_res : NULL;
+    printf("ft_strrchr %s\\n",ft_strrchr(str, c));
+    printf("res        %s\\n",res);
+    if (ft_strrchr(str, c) == res)
+		printf("%s","OK\\n");
+	else
+		printf("%s","WRONG\\n");
+    return (0);
+}
+""")
+        return CompileTemp()
+    
+    def solve(self,test):
+        if test[0] == "NULL":
+            test[0] = ""
+        txt = str((test[0])[::-1])
+        txt = [ord(i) for i in txt]
+        idx = len(txt) - txt.index(test[1]) - 1 if test[1] in txt else -1
+        if test[1] == 0:
+            idx = len(txt)
+        test.append(idx)
+        test = [str(i) for i in test]
+        return test
     def Execute(self):
-        return ExecuteCode()==0
+        #Config.valgrind.print = True
+        tests= [
+            ["",0],
+            ["AAAA",0],
+            ["",ord('A')],
+            ["AAAA",ord('B')],
+            ["BAAAA",ord('B')],
+            ["AABAA",ord('B')],
+            ["AABjhdBjhfdBAA",ord('B')],
+            ["AABjhdBjhfdBAAB",ord('B')],
+            ["NULL",0],
+            ["NULL",ord('A')],
+                ]
+        tests = [self.solve(i) for i in tests]
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=test)
+            v =  r and v
+            print("-"*10)
+        return v
 
 @AddExercise(id="tolower", file=["ft_tolower.c"])
 class Exo(BaseExerciseLibft):
@@ -1039,3 +1146,293 @@ int main(void)
 
     def Execute(self):
         return ExecuteCode().count('OK') == 128
+
+
+
+
+
+
+
+
+
+
+
+
+
+IsPartResetDico('part2')
+
+
+
+
+
+@AddExercise(id="itoa", file=["ft_itoa.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        AutoMain(self.files["ft_itoa.c"],"char	*ft_itoa(int n);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_itoa.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    int nb = atoi(argv[1]);
+    printf("nb:      $%d$\\n",nb);
+    char *res = ft_itoa(nb);
+    printf("ft_itoa  $%s$\\n",res);
+    if (strcmp(res,argv[1]) == 0)
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(res);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        tests= [0, -1 , 1, 20, 2147483647, -2147483648]
+        for i in range(10):
+            t = randint(-2147483648,2147483647)
+            tests.append(t)
+        v = True
+        tests = [str(i) for i in tests]
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=[test])
+            v =  r and v
+            print("-"*10)
+        return v
+
+
+@AddExercise(id="putchar_fd", file=["ft_putchar_fd.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        AutoMain(self.files["ft_putchar_fd.c"],"void	ft_putchar_fd(char c, int fd);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_putchar_fd.h"
+                 
+int main(void)
+{
+    ft_putchar_fd('O',1);
+    ft_putchar_fd('K',1);
+    ft_putchar_fd('\\n',1);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        return "OK\n" in ExecuteCode()
+
+
+@AddExercise(id="putendl_fd", file=["ft_putendl_fd.c","ft_putstr_fd.c","ft_putchar_fd.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        AutoMain(self.files["ft_putendl_fd.c"],"void	ft_putendl_fd(char *s, int fd);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_putendl_fd.h"
+                 
+int main(void)
+{
+    ft_putendl_fd("OK",1);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        return "OK\n" in ExecuteCode()
+
+
+@AddExercise(id="putnbr_fd", file=["ft_putnbr_fd.c","ft_putchar_fd.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        AutoMain(self.files["ft_putnbr_fd.c"],"void	ft_putnbr_fd(int n, int fd);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_putnbr_fd.h"
+                 
+int main(int argc, char **argv)
+{
+    (void)argc;
+    int nb = atoi(argv[1]);
+    ft_putnbr_fd(nb, 1);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        tests= [0, -1 , 1, 20, 2147483647, -2147483648]
+        for i in range(10):
+            t = randint(-2147483648,2147483647)
+            tests.append(t)
+        v = True
+        tests = [str(i) for i in tests]
+        for test in tests:
+            print(test)
+            r = test == ExecuteCode(args=[test])
+            PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
+            v =  r and v
+            print("-"*10)
+        return v
+
+
+@AddExercise(id="putstr_fd", file=["ft_putstr_fd.c","ft_putchar_fd.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        AutoMain(self.files["ft_putstr_fd.c"],"void	ft_putstr_fd(char *s, int fd);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_putstr_fd.h"
+                 
+int main(void)
+{
+    ft_putstr_fd("OK\\n",1);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        return "OK\n" in ExecuteCode()
+
+
+@AddExercise(id="split", file=["ft_split.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        AutoMain(self.files["ft_split.c"],"char	**ft_split(char const *s, char c);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_split.h"
+
+int main(int argc, char **argv)
+{
+    if (argc < 3)
+        return (0);
+    char **res = ft_split(argv[1],argv[2][0]);
+    printf("###############\\n");
+    int i = 0;
+    while (res[i] != 0)
+        printf("#%s#\\n",res[i++]);
+    printf("###############\\n");
+    i = 0;
+    printf("#");
+    while (res[i] != 0)
+        printf("%s|",res[i++]);
+    printf("#\\n");
+    i = 0;
+    while (res[i] != 0)
+        free(res[i++]);
+    free(res);
+    return (0);
+}
+""")
+        return CompileTemp()
+
+    def Execute(self):
+        tests = [
+    ["aa,bb,cc", ","],
+    ["aa", ","],
+    ["aa,,,,,b,b,c", ","],
+    ["dd,e,e f", ","],
+    ["Yaa!", "!"],
+    ["HelloYaa!World", "a"],
+    ["", ","],
+    ["Ya;a!", ";"],
+    ["Ya;a!", "Y"],
+    ["", ","],
+        ]
+        v = True
+        for test in tests:
+            print(test)
+            expected = "|".join([x for x in test[0].split(test[1][0]) if x])
+            expected = "#"+expected+("|" if len(expected) > 0 else "")+"#"
+            print(expected)
+            r = expected in ExecuteCode(args=test)
+            PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
+            v =  r and v
+            print("-"*10)
+        return v
+
+
+@AddExercise(id="striteri", file=["ft_striteri.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        #AutoMain(self.files[".c"],)
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode() == 0
+
+
+@AddExercise(id="strjoin", file=["ft_strjoin.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        #AutoMain(self.files[".c"],)
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode() == 0
+
+
+@AddExercise(id="strmapi", file=["ft_strmapi.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        #AutoMain(self.files[".c"],)
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode() == 0
+
+
+@AddExercise(id="strtrim", file=["ft_strtrim.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        #AutoMain(self.files[".c"],)
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode() == 0
+
+
+@AddExercise(id="substr", file=["ft_substr.c"])
+class Exo(BaseExerciseLibft):
+
+    def Compile(self):
+        #AutoMain(self.files[".c"],)
+        return CompileTemp()
+
+    def Execute(self):
+        return ExecuteCode() == 0
+
+IsPartResetDico('part3')
+
+
+if len(sys.argv) > 2 and sys.argv[2].startswith("part"):
+    sys.argv = sys.argv[:2]
