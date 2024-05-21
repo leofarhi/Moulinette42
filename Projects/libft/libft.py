@@ -54,17 +54,64 @@ class BaseExerciseLibft(BaseExercise):
         return True
 
 
+from . import ResTree as ResTree
+
 @AddExercise(id="Makefile")
 class Exo(BaseExerciseLibft):
+    
+    def GetFiles(self, path):
+        return os.listdir(path)
+    
+    def eq_lst(self,lst1,lst2):
+        return sorted(lst1) == sorted(lst2)
+    
+    def Norme(self):
+        v = True
+        for file in self.base_files:
+            if "Makefile" == file: continue
+            v = CheckNorme(Join(self.path,file)) and v
+        return v
 
     def Compile(self):
+        v = True
         print("#"*5,"make","#"*5)
         print(Process(["make"],cwd=Config.temp_path))
-        #print(self.files)
-        return True
+        PrintTree()
+        v = IfValid(self.eq_lst(ResTree.make,self.GetFiles(Config.temp_path))) and v
+
+        print("#"*5,"make fclean","#"*5)
+        print(Process(["make","fclean"],cwd=Config.temp_path))
+        PrintTree()
+        v = IfValid(self.eq_lst(ResTree.make_fclean,self.GetFiles(Config.temp_path))) and v
+
+        print("#"*5,"make all","#"*5)
+        print(Process(["make","all"],cwd=Config.temp_path))
+        PrintTree()
+        v = IfValid(self.eq_lst(ResTree.make_all,self.GetFiles(Config.temp_path))) and v
+    
+        print("#"*5,"make clean","#"*5)
+        print(Process(["make","clean"],cwd=Config.temp_path))
+        PrintTree()
+        v = IfValid(self.eq_lst(ResTree.make_clean,self.GetFiles(Config.temp_path))) and v
+
+        print("#"*5,"make re","#"*5)
+        print(Process(["make","re"],cwd=Config.temp_path))
+        PrintTree()
+        v = IfValid(self.eq_lst(ResTree.make_re,self.GetFiles(Config.temp_path))) and v
+    
+        print("#"*5,"make fclean","#"*5)
+        print(Process(["make","fclean"],cwd=Config.temp_path))
+
+        print("#"*5,"make libft.a","#"*5)
+        print(Process(["make","libft.a"],cwd=Config.temp_path))
+        PrintTree()
+        v = IfValid(self.eq_lst(ResTree.make_libft_a,self.GetFiles(Config.temp_path))) and v
+
+        #print(self.GetFiles(Config.temp_path))    
+        return v
+        return "libft.a" in os.listdir(Config.temp_path)
 
     def Execute(self):
-        #return ExecuteCode()==0
         return True
     
 @AddExercise(id="atoi", file=["ft_atoi.c"])
@@ -893,7 +940,7 @@ int main(void)
 	printf("#0# %s\\n", ft_strncmp(s0_0,s1_0,1)== strncmp(s0_0,s1_0,1) ? "Success" : "Fail");
 
     printf("%d, %d\\n", ft_strncmp(s1_0,s1_0,0), strncmp(s1_0,s1_0,0));
-	printf("#0# %s\\n", ft_strncmp(s1_0,s1_0,0)== strncmp(s1_0,s1_0,0) ? "Success" : "Fail");
+	printf("#0 bis# %s\\n", ft_strncmp(s1_0,s1_0,0)== strncmp(s1_0,s1_0,0) ? "Success" : "Fail");
 
     printf("%d, %d\\n", ft_strncmp(s1_0,s1_0,1), strncmp(s1_0,s1_0,1));
 	printf("#1# %s\\n", ft_strncmp(s1_0,s1_0,1)== strncmp(s1_0,s1_0,1) ? "Success" : "Fail");
@@ -953,6 +1000,23 @@ int main(void)
 
 	printf("%d, %d\\n", ft_strncmp(s5, s7, 8), strncmp(s5, s7, 8));
 	printf("#17# %s\\n", ft_strncmp(s5, s7, 8)== strncmp(s5, s7, 8) ? "Success" : "Fail");
+    
+    
+    char s1_1[] = "abcdef";
+    char s2_1[] = "abc\\375xx";
+    char s3_1[] = "\\200";
+    char s4_1[] = "\\0";
+    char s5_1[] = "\\x12\\xff\\x65\\x12\\xbd\\xde\\xad";
+    char s6_1[] = "\\x12\\x02";
+    
+    printf("%d, %d\\n", ft_strncmp(s1_1, s2_1, 5), strncmp(s1_1, s2_1, 5));
+	printf("#18# %s\\n", ft_strncmp(s1_1, s2_1, 5)== strncmp(s1_1, s2_1, 5) ? "Success" : "Fail");
+    
+    printf("%d, %d\\n", ft_strncmp(s3_1, s4_1, 1), strncmp(s3_1, s4_1, 1));
+	printf("#19# %s\\n", ft_strncmp(s3_1, s4_1, 1)== strncmp(s3_1, s4_1, 1) ? "Success" : "Fail");
+    
+    printf("%d, %d\\n", ft_strncmp(s5_1, s6_1, 6), strncmp(s5_1, s6_1, 6));
+	printf("#20# %s\\n", ft_strncmp(s5_1, s6_1, 6)== strncmp(s5_1, s6_1, 6) ? "Success" : "Fail");
 
     return (0);
 }
@@ -962,7 +1026,7 @@ int main(void)
     def Execute(self):
         ExecuteCode(canPrint=False)
         Config.valgrind.active = False
-        return ExecuteCode().count("Success") == 19
+        return ExecuteCode().count("Success") == 22
 
 @AddExercise(id="strnstr", file=["ft_strnstr.c"])
 class Exo(BaseExerciseLibft):
@@ -1363,6 +1427,7 @@ int main(int argc, char **argv)
     ["Ya;a!", ";"],
     ["Ya;a!", "Y"],
     ["", ","],
+    ["hello!", " "],
         ]
         v = True
         for test in tests:
@@ -1517,26 +1582,114 @@ int main(int argc, char **argv)
         return v
 
 
-@AddExercise(id="strtrim", file=["ft_strtrim.c"])
+@AddExercise(id="strtrim", file=["ft_strtrim.c","ft_strlcpy.c","ft_strlen.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files[".c"],)
+        AutoMain(self.files["ft_strtrim.c"],"char	*ft_strtrim(char const *s1, char const *set);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_strtrim.h"
+                 
+void Check(char *s1, char *want, char *trim)
+{
+    char *ret = ft_strtrim(s1, trim);
+                 
+    printf("-s1:#%s#\\n-want:#%s#\\n-res:#%s#\\n",s1,want,ret);
+ 
+ 	if (!strcmp(ret, want))
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(ret);
+}
+
+int main(void)
+{
+ 	Check("   \\t  \\n\\n \\t\\t  \\n\\n\\nHello \\t  Please\\n Trim me ! !\\n   \\n \\n \\t\\t\\n  ",
+          "Hello \\t  Please\\n Trim me ! !",
+          " \\n\\t");
+    Check("",
+          "",
+          "");
+    Check("&&&&&&",
+          "",
+          "&");
+    Check("&*&*&*&*HELLO*&*&*&*",
+          "HELLO",
+          "&*");
+    Check("&HELLO*",
+          "HELLO",
+          "&*");
+    Check("&HELLO*",
+          "&HELLO*",
+          "");
+    return (0);
+}
+""")
         return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode() == 0
+        return ExecuteCode().count("OK\n") == 6
 
 
-@AddExercise(id="substr", file=["ft_substr.c"])
+@AddExercise(id="substr", file=["ft_substr.c","ft_strlcpy.c","ft_memcpy.c","ft_strlen.c"])
 class Exo(BaseExerciseLibft):
 
     def Compile(self):
-        #AutoMain(self.files[".c"],)
+        AutoMain(self.files["ft_substr.c"],"char	*ft_substr(char const *s, unsigned int start, size_t len);","""
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "ft_substr.h"
+                 
+void Check()
+{
+    
+}
+
+int main(int argc, char **argv)
+{
+    (void)argc;
+    char *str = argv[1];
+    unsigned int start = atoll(argv[2]);
+    size_t size = atoll(argv[3]);
+    char *want = argv[4];
+ 	char *ret = ft_substr(str, start, size);
+    printf("-str:#%s#\\t-start:%u\\t-size:%lu\\n",str,start,size);
+    printf("-want:#%s#\\n-res :#%s#\\n",want,ret);
+ 
+ 	if (!strcmp(ret, want))
+        printf("%s","OK\\n");
+    else
+        printf("%s","WRONG\\n");
+    free(ret);
+    return (0);
+}
+""")
         return CompileTemp()
 
     def Execute(self):
-        return ExecuteCode() == 0
+        tests = [
+    ["",0,0,""],
+    ["abc",1,1,"b"],
+    ["i just want this part $$$$$$$$$$$$$",0,22,"i just want this part "],
+    ["abcd",2,10,"cd"],
+    ["abcd",4,10,""],
+    ["hola",4294967295,0,""],
+    ["hola",0,18446744073709551615,"hola"],
+]
+        v = True
+        for test in tests:
+            print(test)
+            r = "OK\n" in ExecuteCode(args=[str(i) for i in test])
+            PrintColor(*([('Wrong',Colors.RED),('OK',Colors.GREEN)][int(r)]))
+            v =  r and v
+            print("-"*10)
+        return v
 
 IsPartResetDico('part3')
 
