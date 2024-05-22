@@ -5,17 +5,28 @@ class BaseExercise:
         self.path = Join(Config.project_path,self.id)
         self.files = {}
 
-    def CopyToTemp(self, file,*args, **kwargs):
-        return CopyToTemp(Join(self.path,file),*args, **kwargs)
+    def CopyToTemp(self, file, subfolder="", *args, **kwargs):
+        return CopyToTemp(Join(self.path,file), subfolder = subfolder,*args, **kwargs)
+    
+    def CopyToTempDir(self, path, subfolder="", *args, **kwargs):
+        dico = {}
+        for file in os.listdir(path):
+            if file in ["__pycache__",".git"]:
+                continue
+            if os.path.isfile(Join(path,file)):
+                dico[file] = self.CopyToTemp(Join(path,file), subfolder = subfolder,*args, **kwargs)
+            else:
+                temp =self.CopyToTempDir(Join(path,file), subfolder = Join(subfolder,file),*args, **kwargs)
+                for key in temp:
+                    dico[Join(file,key)] = temp[key]
+        return dico
     
     def Init(self):
         global Config
         Config.normeflag = ["-R","CheckForbiddenSourceHeader"]
         Config.output_name = "Output"
         Config.valgrind = ValgrindConfig()
-        for file in os.listdir(self.path):
-            if os.path.isfile(Join(self.path,file)):
-                self.files[file] = self.CopyToTemp(file)
+        self.files = self.CopyToTempDir(self.path)
         return True
     
     def Norme(self):
