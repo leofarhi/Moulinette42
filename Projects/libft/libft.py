@@ -74,30 +74,40 @@ class Exo(BaseExerciseLibft):
 
     def Compile(self):
         v = True
-        resTree = ResTree.ResTreeBase
+        with_bonus = True in ['_bonus' in i for i in os.listdir(Config.temp_path)]
+        PrintColor('Bonus: '+(['Non','Oui'][with_bonus]),Colors.PURPLE)
+        if with_bonus:
+            resTree = ResTree.ResTreeBonus
+        else:
+            resTree = ResTree.ResTreeBase
         print("#"*5,"make","#"*5)
         print(Process(["make"],cwd=Config.temp_path))
         PrintTree()
+        #print(self.GetFiles(Config.temp_path))  
         v = IfValid(self.eq_lst(resTree.make,self.GetFiles(Config.temp_path))) and v
 
         print("#"*5,"make fclean","#"*5)
         print(Process(["make","fclean"],cwd=Config.temp_path))
         PrintTree()
+        #print(self.GetFiles(Config.temp_path))  
         v = IfValid(self.eq_lst(resTree.make_fclean,self.GetFiles(Config.temp_path))) and v
 
         print("#"*5,"make all","#"*5)
         print(Process(["make","all"],cwd=Config.temp_path))
         PrintTree()
+        #print(self.GetFiles(Config.temp_path))  
         v = IfValid(self.eq_lst(resTree.make_all,self.GetFiles(Config.temp_path))) and v
     
         print("#"*5,"make clean","#"*5)
         print(Process(["make","clean"],cwd=Config.temp_path))
         PrintTree()
+        #print(self.GetFiles(Config.temp_path))  
         v = IfValid(self.eq_lst(resTree.make_clean,self.GetFiles(Config.temp_path))) and v
 
         print("#"*5,"make re","#"*5)
         print(Process(["make","re"],cwd=Config.temp_path))
         PrintTree()
+        #print(self.GetFiles(Config.temp_path))  
         v = IfValid(self.eq_lst(resTree.make_re,self.GetFiles(Config.temp_path))) and v
     
         print("#"*5,"make fclean","#"*5)
@@ -106,7 +116,24 @@ class Exo(BaseExerciseLibft):
         print("#"*5,"make libft.a","#"*5)
         print(Process(["make","libft.a"],cwd=Config.temp_path))
         PrintTree()
+        #print(self.GetFiles(Config.temp_path))  
         v = IfValid(self.eq_lst(resTree.make_libft_a,self.GetFiles(Config.temp_path))) and v
+
+        if with_bonus:
+            print("#"*5,"make fclean","#"*5)
+            print(Process(["make","fclean"],cwd=Config.temp_path))
+
+            print("#"*5,"make bonus","#"*5)
+            print(Process(["make","bonus"],cwd=Config.temp_path))
+            PrintTree()
+            #print(self.GetFiles(Config.temp_path))  
+            v = IfValid(self.eq_lst(resTree.make_bonus,self.GetFiles(Config.temp_path))) and v
+
+            print("#"*5,"make clean bonus","#"*5)
+            print(Process(["make","clean"],cwd=Config.temp_path))
+            PrintTree()
+            #print(self.GetFiles(Config.temp_path))  
+            v = IfValid(self.eq_lst(resTree.make_clean_bonus,self.GetFiles(Config.temp_path))) and v
 
         #print(self.GetFiles(Config.temp_path))    
         return v
