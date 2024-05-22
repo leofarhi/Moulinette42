@@ -1,4 +1,5 @@
 from BaseLib import *
+from BaseMan import *
 from BaseExercise import Exercises
 Commandes = {}
 
@@ -54,6 +55,16 @@ def Print(project_id):
     print('#'*5)
     for i in Exercises:
         PrintColor(i,Colors.YELLOW)
+        
+@Commande("man")
+def Print(project_id):
+    Exec("clear")
+    spec = importlib.import_module(f"Projects.{project_id}.{project_id.split('.')[-1]}")
+    PrintColor(f"Man {project_id}",Colors.YELLOW)
+    id=""
+    if len(sys.argv) > 4:
+        id  = sys.argv[3]
+    ExecMan(id)
 
 @Commande("path")
 def Path(project_id):

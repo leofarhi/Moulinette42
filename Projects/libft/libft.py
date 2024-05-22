@@ -6,8 +6,9 @@ print(GetIdProject(__file__))
 Config.project_path = GetGitPath(GetIdProject(__file__))
 Config.normeflag = ["-R","CheckForbiddenSourceHeader"]
 
-PrintColor("Cette correction est cours de creation !", Colors.RED)
+#PrintColor("Cette correction est cours de creation !", Colors.RED)
 
+from . import man
 
 def IsPartResetDico(part):
     global IsPartResetDico

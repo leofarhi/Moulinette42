@@ -1,6 +1,7 @@
 # Cree par Lfarhi le 07/02/2024
 # Durant la piscine de 42
 from BaseLib import *
+from BaseMan import *
 from BaseExercise import *
 from Commandes import *
 import sys
