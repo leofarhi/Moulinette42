@@ -14,10 +14,13 @@ class Exo(BaseExercise):
         self.path = Config.project_path
 
     def Compile(self):
+        Config.valgrind.active = True
+        Config.valgrind.print = True
         print(Process(["make"],cwd=Config.temp_path))
         AutoMain(None, None,"""
 		#include <ft_printf.h>
 		#include <stdio.h>
+		#include <limits.h>
         
 		int main(void)
 		{
@@ -37,9 +40,21 @@ class Exo(BaseExercise):
             printf("# %p %p #\\n", NULL, NULL);
             printf("# %p %p #\\n", str, NULL);
             printf("# %p %p #\\n", (void *)5645564564, NULL);*/
-            char *str = NULL;
-            ft_printf("%23s#\\n", str);
-            printf("%23s#\\n", str);
+            //char *str = "";
+            //ft_printf("%23s#&\\n", str);
+            //printf("%23s#\\n", str);
+            /*ft_printf("%-11p %-12p#&\\n", INT_MIN, INT_MAX);
+            ft_printf("%-11p %-12p#&\\n", LONG_MIN, LONG_MAX);
+            ft_printf("%-11p %-12p#&\\n", ULLONG_MAX - 2147483647, LONG_MAX);
+            printf("%-11p %-12p#1\\n", (void *)-2147483648, (void *)LONG_MIN);
+            printf("%-11p %-12p#2\\n", (void *)INT_MIN, (void *)INT_MAX);
+            printf("%p %p#3\\n", (void *)INT_MIN, (void *)INT_MAX);*/
+            char format[] = "#%.09s#\\n";
+            char *str = "yolo";
+            int r1 = ft_printf(format, str);
+            format[0] = '$';
+            int r2 = printf(format, str);
+            printf("ft_printf %d, printf %d\\n", r1, r2);
 			return (0);
 		}
 		""")
