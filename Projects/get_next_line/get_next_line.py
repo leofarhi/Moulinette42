@@ -23,15 +23,23 @@ class GNL_BaseExercise(BaseExercise):
         """
         
     def Compile(self):
-        self.Init_GNL()
         Config.valgrind.active = True
-        Config.valgrind.print = True
+        #Config.valgrind.print = True
+        self.Init_GNL()
         AutoMain(None, None,"""
 		#include "get_next_line.h"
 		#include <stdio.h>
 		#include <stdlib.h>
 		#include <limits.h>
 		#include <fcntl.h>
+                 
+        int print_line(char *line)
+		{
+			printf("#%s",line);
+            if (line != NULL)
+				free(line);
+            return (line != NULL);
+		}
 		""" + self.main)
         if self.BUFFER_SIZE == None:
             buff_txt = ""
@@ -49,23 +57,77 @@ class GNL_BaseExercise(BaseExercise):
 @AddExercise(id="test1")
 class Exo(GNL_BaseExercise):
     def Init_GNL(self):
-        with open(self.path+"/file.txt","w") as f:
-            f.write("Hello World\nI am a test\nThis is a test file")
+        with open(Config.temp_path+"/file.txt","w") as f:
+            f.write("Hello World\nI am a test\nThis is a test file!\nYaay\nYaay")
         self.BUFFER_SIZE = None
         self.main = """
         int main(void)
 		{
             int fd = open("file.txt",O_RDONLY);
-            char *line = (void *)1;
-            while (fd != -1 && line != NULL)
-            {
-                line = get_next_line(fd);
-                if (line != NULL)
-                {
-                    printf("%s\\n",line);
-                    free(line);
-                }
-            }
+            printf("fd = %d\\n",fd);
+            while(print_line(get_next_line(fd)))
+            {}
+            if (fd != -1)
+                close(fd);
+			return (0);
+		}
+        """
+
+@AddExercise(id="test2")
+class Exo(GNL_BaseExercise):
+    def Init_GNL(self):
+        with open(Config.temp_path+"/file.txt","w") as f:
+            f.write("Hello World\nI am a test\nThis is a test file!\nYaay\nYaay\n")
+        self.BUFFER_SIZE = None
+        self.main = """
+        int main(void)
+		{
+            int fd = open("file.txt",O_RDONLY);
+            printf("fd = %d\\n",fd);
+            while(print_line(get_next_line(fd)))
+            {}
+            if (fd != -1)
+                close(fd);
+			return (0);
+		}
+        """	
+        
+@AddExercise(id="test3")
+class Exo(GNL_BaseExercise):
+    def Init_GNL(self):
+        CopyToTemp(os.path.dirname(__file__)+"/read_error.txt")
+        self.BUFFER_SIZE = 10
+        self.main = """
+        int main(void)
+		{
+            int fd = open("read_error.txt",O_RDONLY);
+            printf("fd = %d\\n",fd);
+            while(print_line(get_next_line(fd)))
+            {}
+            if (fd != -1)
+                close(fd);
+			return (0);
+		}
+        """
+        
+@AddExercise(id="test4")
+class Exo(GNL_BaseExercise):
+    def Init_GNL(self):
+        Config.valgrind.print = True
+        CopyToTemp(os.path.dirname(__file__)+"/read_error.txt")
+        self.BUFFER_SIZE = 10
+        self.main = """
+        int main(void)
+		{
+            int fd = open("read_error.txt",O_RDONLY);
+            print_line(get_next_line(fd));
+            print_line(get_next_line(fd));
+            char temp[1000];
+            read(fd,temp,1000);
+            printf("fd = %d\\n",fd);
+            printf("BUFFER_SIZE = %d\\n",BUFFER_SIZE);
+            while(print_line(get_next_line(fd)))
+            {}
             if (fd != -1)
                 close(fd);
 			return (0);
