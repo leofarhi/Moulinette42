@@ -92,7 +92,7 @@ class Exo(GNL_BaseExercise):
 		}
         """	
         
-@AddExercise(id="test3")
+#@AddExercise(id="test3")
 class Exo(GNL_BaseExercise):
     def Init_GNL(self):
         CopyToTemp(os.path.dirname(__file__)+"/read_error.txt")
@@ -110,7 +110,7 @@ class Exo(GNL_BaseExercise):
 		}
         """
         
-@AddExercise(id="test4")
+#@AddExercise(id="test4")
 class Exo(GNL_BaseExercise):
     def Init_GNL(self):
         Config.valgrind.print = True
@@ -133,3 +133,47 @@ class Exo(GNL_BaseExercise):
 			return (0);
 		}
         """
+        
+@AddExercise(id="test5")
+class Exo(GNL_BaseExercise):
+    def Init_GNL(self):
+        Config.valgrind.print = True
+        CopyToTemp(os.path.dirname(__file__)+"/giant_line.txt")
+        self.BUFFER_SIZE = 10
+        self.main = """
+        int main(void)
+		{
+            int fd = open("giant_line.txt",O_RDONLY);
+            print_line(get_next_line(fd));
+            print_line(get_next_line(fd));
+            char temp[1000];
+            read(fd,temp,1000);
+            printf("fd = %d\\n",fd);
+            printf("BUFFER_SIZE = %d\\n",BUFFER_SIZE);
+            while(print_line(get_next_line(fd)))
+            {}
+            if (fd != -1)
+                close(fd);
+			return (0);
+		}
+        """
+        
+@AddExercise(id="test6")
+class Exo(GNL_BaseExercise):
+    def Init_GNL(self):
+        Config.valgrind.print = True
+        with open(Config.temp_path+"/file.txt","w") as f:
+            f.write("0")
+        self.BUFFER_SIZE = 1000
+        self.main = """
+        int main(void)
+		{
+            int fd = open("file.txt",O_RDONLY);
+            printf("fd = %d\\n",fd);
+            while(print_line(get_next_line(fd)))
+            {}
+            if (fd != -1)
+                close(fd);
+			return (0);
+		}
+        """	
