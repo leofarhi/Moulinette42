@@ -7,6 +7,19 @@ import json
 import importlib
 import time
 
+class Chrono:
+    def __init__(self):
+        self.start = 0
+        self.end = 0
+    def Start(self):
+        self.start = time.time()
+    def Stop(self):
+        self.end = time.time()
+    def Get(self):
+        return self.end - self.start
+    def GetSec(self,deci=2):
+        return round(self.Get(),deci)
+
 class ValgrindConfig:
     def __init__(self):
         self.active = False
