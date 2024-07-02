@@ -57,7 +57,11 @@ class Exo(BaseExercise):
     def Execute(self):
         r = True
         r = self.check([1,2,3]) and r
+        r = self.check([4,5,6,1,2,3]) and r
+        r = self.check([4,5,6,0,1,2,3]) and r
+        r = self.check([4,5,6,7,1,2,3]) and r
         r = self.check([1,3,2]) and r
+        r = self.check([2, 1, 3]) and r
         #TODO Check error same number
         #TODO Check error with over int
         #TODO Check error with no number (text)
